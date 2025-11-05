@@ -1,0 +1,48 @@
+public class Weapon {
+
+    private final String serialNumber;
+    private final String acog;
+    private final String peq;
+    private final String buttstockNumber;
+
+    public Weapon (String serialNumber, String acog, String peq, String buttstockNumber) {
+        this.serialNumber = serialNumber;
+        this.acog = acog;
+        this.peq = peq;
+        this.buttstockNumber = buttstockNumber;
+    }
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+    public String getAcog() {
+        return acog;
+    }
+    public String getPeq() {
+        return peq;
+    }
+    public String getButtstockNumber() {
+        return buttstockNumber;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!(obj instanceof Weapon))
+            return false;
+        Weapon other = (Weapon) obj;
+        return serialNumber.equals(other.serialNumber);
+    }
+    @Override
+    public int hashCode() {
+        return serialNumber.hashCode();
+    }
+    @Override
+    public String toString() {
+        return "Weapon{" +
+                "serial='W" + serialNumber + '\'' +
+                ", ACOG='" + acog + '\'' +
+                ", PEQ='" + peq + '\'' +
+                ", Buttstock='" + buttstockNumber + '\'' +
+                '}';
+    }
+}
