@@ -1,0 +1,34 @@
+class Soldier {
+
+    private String lastName;
+    private String firstName;
+    private String rank;
+    private String platoon; // Make this generic later
+    private String squad; // Make this generic Later
+
+    public Soldier(String lastName, String firstName, String rank) {
+        this.lastName = lastName;
+        this.firstName = firstName;
+        this.rank = rank;
+        this.platoon = platoon;
+        this.squad = squad;
+    }
+    public String getLastName() {
+        return lastName.substring(0,1).toUpperCase() + lastName.substring(1);
+    }
+    public String getFirstName() {
+        return firstName.substring(0,1).toUpperCase() + firstName.substring(1);
+    }
+    public String getRank() {
+        return rank.toUpperCase();
+    }
+    public String getPlatoon() {
+        return platoon;
+    }
+    public String getSquad() {
+        return squad;
+    }
+    public String toString() {
+        return getRank() + " " + getFirstName() + ", " + getFirstName();
+    }
+}
