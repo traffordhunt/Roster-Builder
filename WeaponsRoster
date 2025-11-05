@@ -208,7 +208,7 @@ public class WeaponsRoster {
         }
 
         System.out.printf("+----------------------------------------------------------------------------------------+%n");
-        System.out.printf("|            * * * * *           C-Co 1st/111th M4 Roster           * * * * *            |%n");
+        System.out.printf("|                   * * * * *           M4 Roster           * * * * *                    |%n");
         System.out.printf("+------------+----------+---------+-----------+------------------+----------------+------+%n");
         System.out.printf("| Weapon S/N | ACOG S/N | PEQ S/N | Buttstock |     Last Name    |   First Name   | Rank |%n");
         System.out.printf("+------------+----------+---------+-----------+------------------+----------------+------+%n");
