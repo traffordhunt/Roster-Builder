@@ -1,0 +1,410 @@
+import java.io.*;
+import java.util.*;
+
+public class WeaponsRoster {
+
+    private static final Scanner input = new Scanner(System.in);
+    private static String m4SerialNumber;
+    private static String acogSerialNumber;
+    private static String peqSerialNumber;
+    private static String buttstockNumber;
+    private static String lastName;
+    private static String firstName;
+    private static String rank;
+    private static String option;
+    private static Weapon weapon = new Weapon(m4SerialNumber, acogSerialNumber, peqSerialNumber, buttstockNumber);
+    private static Soldier soldier = new Soldier(lastName, firstName, rank);
+    private static final HashMap<Weapon, Soldier> weaponsRoster = new HashMap<>();
+
+    public static void main(String[] args) {
+        while (true) {
+            option = getUserChoice();
+            switch (option.toUpperCase()) {
+                case "A": add(); break;
+                case "U": //update(); break;
+                case "D": remove(); break;
+                case "V": //displayRoster(); break;
+                case "C": clearRoster(); break;
+                case "L": lookUp(); break;
+                case "I": importRoster(); break;
+                case "E": exportRoster(); break;
+                case "Q":
+                    System.out.println("Terminated");
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+    public static String getUserChoice() {
+        System.out.println();
+        System.out.println("""
+                //=========================\\\\
+                ||  * * * Main Menu * * *  ||
+                ||=========================||
+                || Choose an option below: ||
+                ||-------------------------||
+                || - (A)dd                 ||
+                || - (U)pdate              ||
+                || - (D)elete              ||
+                || - (V)iew                ||
+                || - (C)lear               ||
+                || - (L)ook up             ||
+                || - (I)mport from file    ||
+                || - (E)xport to file      ||
+                || - (Q)uit                ||
+                \\\\=========================//""");
+        System.out.println();
+        return input.nextLine();
+    }
+    public static boolean isValid(String serialNumber) {
+        if (serialNumber.length() == 6 && serialNumber.matches("\\d+")) {
+            return true;
+        }
+        return false;
+    }
+    public static void add() {
+        System.out.println("Add Weapon Serial number (Excluding 'W'): \nOr leave blank to return to main menu");
+        m4SerialNumber = input.nextLine();
+        if (m4SerialNumber == null || m4SerialNumber.isBlank()) return;
+        while(!isValid(m4SerialNumber)) {
+            System.out.println("Invalid Serial Number");
+            m4SerialNumber = input.nextLine();
+        }
+
+        System.out.println("Add ACOG? (Y/N): ");
+        acogSerialNumber = addSensitiveItem();
+
+        System.out.println("Add PEQ? (Y/N): ");
+        peqSerialNumber = addSensitiveItem();
+
+        System.out.println("Enter buttstock number (Excluding 'R'): ");
+        buttstockNumber = input.nextLine();
+
+        Weapon weapon = new Weapon(m4SerialNumber, acogSerialNumber, peqSerialNumber, buttstockNumber);
+
+        System.out.println("Add Last name: ");
+        lastName = setEntry();
+
+        System.out.println("Add First name: ");
+        firstName = setEntry();
+
+        System.out.println("Add Rank: ");
+        rank = setEntry();
+
+        Soldier soldier = new Soldier(lastName, firstName, rank);
+
+        System.out.println("W" + weapon.getSerialNumber() + ", " + weapon.getAcog() + ", " + weapon.getPeq()
+                + " is assigned to " + soldier.getRank() + " " + soldier.getLastName() + ", " + soldier.getFirstName());
+
+        weaponsRoster.put(weapon, soldier);
+    }
+    public static String addSensitiveItem() {
+        option = input.nextLine();
+        while (!option.equalsIgnoreCase("N") || !option.equalsIgnoreCase("Y")) {
+            if (option.equalsIgnoreCase("Y")) {
+                System.out.println("Enter serial number: ");
+                String serialNumber = input.nextLine();
+                if (!isValid(serialNumber)) {
+                    System.out.println("Invalid serial number");
+                } else {
+                    return serialNumber;
+                }
+            } else if (option.equalsIgnoreCase("N")) {
+                return "------";
+            } else {
+                System.out.println("Invalid option \nEnter Y or N");
+                option = input.nextLine();
+            }
+        }
+        return null;
+    }
+    /*public static void update() {
+        if (rosterIsEmpty()) return;
+
+        System.out.println("Enter serial number or 'R' to return to main menu: ");
+
+        m4SerialNumber = getValidSerialNumber();
+
+        if (m4Roster.containsKey(m4SerialNumber)) {
+
+            soldier = m4Roster.remove(m4SerialNumber);
+
+            lastName = soldier.getLastName();
+            firstName = soldier.getFirstName();
+            rank = soldier.getRank();
+
+        } else {
+            System.out.println("Serial number not found");
+            return;
+        }
+        System.out.println("Enter what item to update: (W)eapon, (A)cog, (P)eq, (B)uttstock, (R)ank, or (N)ame, " +
+                "\n or any other key to return to main menu: ");
+        option = input.nextLine();
+
+        switch (option.toUpperCase()) {
+            case "W": updateM4SerialNumber(); break;
+            case "A": updateAcogSerialNumber(); break;
+            case "P": updatePeqSerialNumber(); break;
+            case "B": updateButtstockNumber(); break;
+            case "R": updateRank(); break;
+            case "N": updateName(); break;
+            default:
+                System.out.println("Returning to main menu");
+        }
+    }*/
+    public static void remove() {
+        if (rosterIsEmpty()) return;
+
+        System.out.println("Enter serial number: ");
+        String serialNumber = input.nextLine();
+
+    }
+    public static void lookUp() {
+        if (rosterIsEmpty()) return;
+
+        System.out.println("Look up by (S)erial number or (N)ame?");
+        String option = input.nextLine();
+
+        switch (option.toUpperCase()) {
+            case "S": lookUpBySerialNumber(); break;
+            case "N": lookUpByName(); break;
+            default:
+                System.out.println("Invalid option");
+        }
+    }
+    public static void lookUpBySerialNumber() {
+        System.out.println("Enter serial number: ");
+
+
+        if (weaponsRoster.containsKey(weapon.getSerialNumber())) {
+            Soldier soldier = weaponsRoster.get(m4SerialNumber);
+            System.out.println("W" + m4SerialNumber + " is assigned to " +
+                    soldier.getRank() + " " + soldier.getLastName() + ", " + soldier.getFirstName());
+        } else {
+            System.out.println("W" + m4SerialNumber + " is unassigned");
+        }
+    }
+    /*public static void displayRoster() {
+        if (rosterIsEmpty()) return;
+
+        List<Map.Entry<Weapon, Soldier>> entries = new ArrayList<>(m4Roster.entrySet());
+
+        while (true) {
+            System.out.println("Sort by: (S)erial number, or (N)ame: ");
+            String option = input.nextLine();
+            switch (option.toUpperCase()) {
+                case "S":
+                    entries.sort(Map.Entry.comparingByKey());
+                    break;
+                case "N":
+                    entries.sort(Comparator.comparing(entry -> entry.getValue().getLastName()));
+                    break;
+                default:
+                    System.out.println("Invalid option");
+                    continue;
+            }
+            break;
+        }
+
+        System.out.printf("+----------------------------------------------------------------------------------------+%n");
+        System.out.printf("|            * * * * *           C-Co 1st/111th M4 Roster           * * * * *            |%n");
+        System.out.printf("+------------+----------+---------+-----------+------------------+----------------+------+%n");
+        System.out.printf("| Weapon S/N | ACOG S/N | PEQ S/N | Buttstock |     Last Name    |   First Name   | Rank |%n");
+        System.out.printf("+------------+----------+---------+-----------+------------------+----------------+------+%n");
+
+        for (Map.Entry<Weapon, Soldier> entry : entries) {
+            m4SerialNumber = String.valueOf(entry.getKey());
+            soldier = entry.getValue();
+
+            String acogKey = getKeyByValue(acogs, soldier);
+            String peqKey = getKeyByValue(peqs, soldier);
+            String buttstockKey = getKeyByValue(buttstocks, soldier);
+
+            System.out.printf("| W%-9d | %-8s | %-7s | R%-8s | %-16s | %-14s | %-4s |%n",
+                    m4SerialNumber,
+                    (acogKey == null || acogKey.isEmpty()) ? "--" : acogKey,
+                    (peqKey == null || peqKey.isEmpty()) ? "--" : peqKey,
+                    (buttstockKey == null || buttstockKey.isEmpty()) ? "--" : buttstockKey,
+                    soldier.getLastName(), soldier.getFirstName(), soldier.getRank());
+        }
+        System.out.printf("+------------+----------+---------+-----------+------------------+----------------+------+%n");
+
+        System.out.println();
+        System.out.println("Press any key to return to main menu");
+        input.nextLine();
+    }*/
+    public static <K, V> String getKeyByValue(Map<K, V> map, V value) {
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            if (Objects.equals(entry.getValue(), value)) {
+                return String.valueOf(entry.getKey());
+            }
+        }
+        return null;
+    }
+    public static void clearRoster() {
+        if (rosterIsEmpty()) return;
+
+        while (true) {
+            System.out.println("Confirm clear? (Y/N): ");
+            String option = input.nextLine();
+            switch (option.toUpperCase()) {
+                case "Y":
+                    weaponsRoster.clear();
+                    System.out.println("Roster successfully cleared");
+                    return;
+                case "N":
+                    System.out.println("Clear canceled");
+                    return;
+                default:
+                    System.out.println("Invalid option");
+            }
+        }
+    }
+    public static void exportRoster() {
+        if (rosterIsEmpty()) return;
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("weapons.txt"))) {
+            for (Map.Entry<Weapon, Soldier> entry : weaponsRoster.entrySet()) {
+                writer.write("W" + entry.getKey() + ": " + entry.getValue().toString());
+                writer.newLine();
+            }
+            System.out.println("Roster exported to weapons.txt");
+
+        } catch (IOException e) {
+            System.out.println("Error writing to weapons.txt");
+        }
+    }
+    public static void importRoster() {
+        String file = "weapons.txt";
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String [] parts = line.split(",");
+                if (parts.length != 4) {
+                    System.out.println("Skipping invalid entry " + line);
+                    continue;
+                }
+                m4SerialNumber = parts[0].trim();
+                lastName = parts[1].trim();
+                firstName = parts[2].trim();
+                rank = parts[3].trim();
+
+                Soldier soldier = new Soldier(lastName, firstName, rank);
+                weaponsRoster.put(weapon, soldier);
+            }
+
+            System.out.println("Roster imported from file");
+        } catch (IOException e) {
+            System.out.println("Error reading file");
+        } catch (NumberFormatException e) {
+            System.out.println("Error parsing file, invalid format");
+        }
+    }
+    /*public static void updateM4SerialNumber() {
+        System.out.println("Update weapon serial number: ");
+        m4SerialNumber = updateSerialNumber(m4Roster);
+        System.out.println(rank + " " + lastName + " has been reassigned to W" + m4SerialNumber);
+    }
+    public static void updateAcogSerialNumber() {
+        System.out.println("Update ACOG serial number: ");
+        acogSerialNumber = updateSerialNumber(acogs);
+        System.out.println(rank + " " + lastName + " has been reassigned to ACOG, " + acogSerialNumber);
+    }
+    public static void updatePeqSerialNumber() {
+        System.out.println("Update PEQ serial number: ");
+        peqSerialNumber = updateSerialNumber(peqs);
+        System.out.println(rank + " " + lastName + " has been reassigned to PEQ, " + peqSerialNumber);
+    }
+    public static void updateButtstockNumber() {
+        System.out.println("Update buttstock number (Excluding 'R'): ");
+        buttstockNumber = updateSerialNumber(buttstocks);
+        System.out.println(rank + " " + lastName + " has been reassigned to R" + buttstockNumber);
+    }
+    public static String updateSerialNumber(Map<Weapon, Soldier> map) {
+        String serialNumber = getValidSerialNumber();
+        checkForNull(serialNumber);
+        soldier = new Soldier(lastName, firstName, rank);
+        map.replace(weapon, soldier);
+        return serialNumber;
+    }
+    public static void updateName() {
+        System.out.println("Update last name: ");
+        lastName = input.nextLine();
+        checkForNull(lastName);
+
+        System.out.println("Update first name: ");
+        firstName = input.nextLine();
+        checkForNull(firstName);
+
+        soldier = new Soldier(lastName, firstName, rank);
+        weapon = new Weapon(m4SerialNumber, acogSerialNumber, peqSerialNumber, buttstockNumber);
+
+        m4Roster.replace(weapon, soldier);
+
+        System.out.println("Name corrected");
+    }
+    public static void updateRank() {
+        System.out.println("Update rank: ");
+        rank = input.nextLine();
+        checkForNull(rank);
+
+        soldier = new Soldier(lastName, firstName, rank);
+        m4Roster.put(weapon, soldier);
+
+        System.out.println("Rank updated");
+    }*/
+    public static void lookUpByName() {
+        System.out.println("Enter Soldier's last name: ");
+        lastName = input.nextLine();
+
+        List<Map.Entry<Weapon, Soldier>> matches = new ArrayList<>();
+
+        for (Map.Entry<Weapon, Soldier> entry : weaponsRoster.entrySet()) {
+            if (entry.getValue().getLastName().equalsIgnoreCase(lastName)) {
+                matches.add(entry);
+            }
+        }
+        if (matches.size() == 1) {
+            Map.Entry<Weapon, Soldier> entry = matches.getFirst();
+            System.out.println(entry.getValue().getRank() + " " + entry.getValue().getLastName()
+                    + ": W" + entry.getKey());
+        } else if (matches.size() > 1) {
+            System.out.println("Multiple matches found, enter first name: ");
+            firstName = input.nextLine();
+
+            for (Map.Entry<Weapon, Soldier> entry : weaponsRoster.entrySet()) {
+                if (entry.getValue().getFirstName().equalsIgnoreCase(firstName)
+                        && entry.getValue().getLastName().equalsIgnoreCase(lastName)) {
+                    System.out.println(soldier.getRank() + " " + soldier.getLastName() + ": W" + entry.getKey());
+                    return;
+                }
+            }
+            System.out.println("No matches found under " + firstName + ", " + lastName);
+        } else {
+            System.out.println("No matches found under " + lastName);
+        }
+    }
+    public static boolean rosterIsEmpty() {
+        if (weaponsRoster.isEmpty()) {
+            System.out.println("Weapon roster is empty");
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public static boolean isVacant(Weapon weapon) {
+        if (!weaponsRoster.containsKey(weapon)) {
+            return true;
+        }
+        return false;
+    }
+    public static String setEntry() {
+        String entry = input.nextLine();
+        while (entry.isBlank()) {
+            System.out.println("Fields cannot be empty, enter a valid input: ");
+            entry = input.nextLine();
+        }
+        return entry;
+    }
+}
